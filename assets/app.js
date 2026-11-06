@@ -176,6 +176,7 @@ window.OG = (function () {
       try {
         // this click is what browsers want before they allow a game to make sound
         var w = f.contentWindow;
+        w.__ogStart = true;         // the game stays silent until now
         if (w.MM) w.MM.UME = true;
         (w.__ogAudio || []).forEach(function (a) { a.resume(); });
         f.focus();
