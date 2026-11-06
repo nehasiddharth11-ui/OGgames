@@ -17,8 +17,30 @@ window.OG = (function () {
     } catch (e) { /* the site works without it */ }
   }
 
+  // Fetch the big engine files when someone points at a game, so it opens faster.
+  // Only then: nobody downloads 20 MB just by looking at the home page.
+  var ENGINE = "https://pygame-web.github.io/cdn/0.9.3/cpython312/";
+  var warmed = false;
+  function warmUp() {
+    if (warmed) return;
+    warmed = true;
+    ["main.wasm", "main.data", "main.js"].forEach(function (file) {
+      var link = document.createElement("link");
+      link.rel = "prefetch";
+      link.as = "fetch";
+      link.crossOrigin = "anonymous";
+      link.href = ENGINE + file;
+      document.head.appendChild(link);
+    });
+  }
+
   function tile(game) {
     var a = document.createElement("a");
+    if (game.ready) {
+      a.addEventListener("pointerenter", warmUp);
+      a.addEventListener("touchstart", warmUp, { passive: true });
+      a.addEventListener("focus", warmUp);
+    }
     a.className = "tile";
     a.href = "game.html?id=" + encodeURIComponent(game.id);
     var img = document.createElement("img");
