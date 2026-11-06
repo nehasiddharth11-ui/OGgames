@@ -115,7 +115,7 @@ window.OG = (function () {
     if (stage.requestFullscreen) {
       stage.requestFullscreen().then(function () {
         if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock("landscape").catch(function () { /* the "turn your phone" message covers it */ });
+          screen.orientation.lock("landscape").catch(function () { /* not every phone allows it */ });
         }
         // Chrome and Edge: Esc pauses the game, holding Esc leaves fullscreen
         if (navigator.keyboard && navigator.keyboard.lock) return navigator.keyboard.lock(["Escape"]);
@@ -198,6 +198,18 @@ window.OG = (function () {
     }
     box.addEventListener("click", press);
     window.addEventListener("keydown", onKey);
+    // X on a controller presses Play too
+    var padWasDown = false;
+    var padTimer = setInterval(function () {
+      if (box.hidden) { clearInterval(padTimer); return; }
+      var pads = navigator.getGamepads ? navigator.getGamepads() : [];
+      var down = false;
+      for (var i = 0; i < pads.length; i++) {
+        if (pads[i] && pads[i].buttons[0] && pads[i].buttons[0].pressed) down = true;
+      }
+      if (down && !padWasDown) press();
+      padWasDown = down;
+    }, 50);
 
     loaderApi.finish = function () {
       if (done) return;
@@ -265,6 +277,7 @@ window.OG = (function () {
     window.addEventListener("message", function (e) {
       if (e.source !== frame.contentWindow || !e.data || e.data.source !== "oggames") return;
       if (e.data.type === "ready") loader.finish();
+      if (e.data.type === "exit-fullscreen") leaveFullscreen();
       if (e.data.type !== "complete" || shown) return;
       shown = true;
       leaveFullscreen();
