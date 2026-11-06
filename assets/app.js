@@ -103,6 +103,88 @@ window.OG = (function () {
     }
   }
 
+  /* The loading screen. A browser can't tell how far along a game's start-up is, so the
+     bar is a time-based estimate that never reaches the end until the game says it's ready. */
+  function startLoader(game) {
+    var box = $("loader"), fill = $("loader-fill"), bar = $("loader-bar");
+    var text = $("loader-text"), playBtn = $("loader-play"), tip = $("loader-tip");
+    var STEPS = [[0, "Warming up the game..."], [25, "Loading the game engine..."],
+                 [60, "Building the worlds..."], [85, "Almost there..."]];
+    var tips = game.tips || [];
+    var started = Date.now(), done = false, wantsPlay = false, loaderApi = {};
+    var EXPECTED = 12000;       // about how long a first visit takes, in ms
+
+    box.hidden = false;
+    $("loader-name").textContent = game.name;
+    var pic = $("loader-pic");
+    pic.src = game.thumb;
+    pic.onerror = function () { pic.hidden = true; };
+
+    function setBar(p) {
+      fill.style.width = p + "%";
+      bar.setAttribute("aria-valuenow", Math.round(p));
+    }
+    var tipIndex = 0;
+    function showTip() {
+      tip.textContent = tips.length ? "TIP: " + tips[tipIndex++ % tips.length] : "";
+    }
+    showTip();
+    var tipTimer = setInterval(showTip, 3500);
+    var barTimer = setInterval(function () {
+      var seconds = Date.now() - started;
+      var p = 95 * (1 - Math.exp(-2.2 * seconds / EXPECTED));
+      setBar(p);
+      STEPS.forEach(function (s) { if (p >= s[0]) text.textContent = s[1]; });
+      if (seconds > 60000) text.textContent = "Taking longer than usual. Your connection may be slow.";
+    }, 100);
+    setBar(1);
+    text.textContent = STEPS[0][1];
+
+    function enter() {
+      clearInterval(tipTimer);
+      box.hidden = true;
+      window.removeEventListener("keydown", onKey);
+      var f = loaderApi.frame;
+      if (!f) return;
+      try {
+        // this click is what browsers want before they allow a game to make sound
+        var w = f.contentWindow;
+        if (w.MM) w.MM.UME = true;
+        (w.__ogAudio || []).forEach(function (a) { a.resume(); });
+        f.focus();
+        var c = w.document.getElementById("canvas");
+        if (c) c.focus();
+      } catch (e) { /* the game still runs, maybe silently until it's clicked */ }
+    }
+    function press() {
+      if (done) enter();
+      else {
+        wantsPlay = true;
+        text.textContent = "Starting as soon as it's ready...";
+      }
+    }
+    function onKey(e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        press();
+      }
+    }
+    box.addEventListener("click", press);
+    window.addEventListener("keydown", onKey);
+
+    loaderApi.finish = function () {
+      if (done) return;
+      done = true;
+      clearInterval(barTimer);
+      setBar(100);
+      if (wantsPlay) { enter(); return; }
+      text.textContent = "Ready!";
+      playBtn.hidden = false;
+      playBtn.focus();
+    };
+    return loaderApi;
+  }
+
   function play() {
     var id = new URLSearchParams(location.search).get("id");
     var game = games.filter(function (g) { return g.id === id; })[0];
@@ -128,25 +210,36 @@ window.OG = (function () {
       stage.innerHTML = '<div class="stage-msg">Coming soon!</div>';
       return;
     }
+    var loader = startLoader(game);
 
     saveRecent(id);
     var frame = document.createElement("iframe");
     frame.src = "games/" + encodeURIComponent(id) + "/index.html";
     frame.title = game.name;
     frame.allow = "fullscreen; autoplay; gamepad";
-    frame.onload = function () { frame.focus(); };
-    stage.appendChild(frame);
+    frame.onload = function () {
+      frame.focus();
+      if (!game.loader) loader.finish();    // this game has no "ready" signal: it's ready when loaded
+    };
+    stage.insertBefore(frame, stage.firstChild);
+    loader.frame = frame;
 
     $("fullscreen").onclick = function () {
-      if (stage.requestFullscreen) stage.requestFullscreen();
+      if (stage.requestFullscreen) {
+        stage.requestFullscreen().then(function () {
+          // Chrome and Edge: Esc pauses the game, holding Esc leaves fullscreen
+          if (navigator.keyboard && navigator.keyboard.lock) return navigator.keyboard.lock(["Escape"]);
+        }).catch(function () { /* fullscreen still works without it */ });
+      }
       frame.focus();
     };
 
     // The game says it was beaten: only believe the game in our own frame
     var shown = false;
     window.addEventListener("message", function (e) {
-      if (e.source !== frame.contentWindow || shown) return;
-      if (!e.data || e.data.source !== "oggames" || e.data.type !== "complete") return;
+      if (e.source !== frame.contentWindow || !e.data || e.data.source !== "oggames") return;
+      if (e.data.type === "ready") loader.finish();
+      if (e.data.type !== "complete" || shown) return;
       shown = true;
       if (document.fullscreenElement) document.exitFullscreen();
       $("popup-title").textContent = "You beat " + game.name + "!";

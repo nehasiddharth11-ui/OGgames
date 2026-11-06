@@ -14,7 +14,18 @@
 </header>
 
 <main class="page">
-  <div id="stage" class="stage"></div>
+  <div id="stage" class="stage">
+    <div id="loader" class="loader" hidden>
+      <div class="loader-box">
+        <img id="loader-pic" class="loader-pic" alt="">
+        <div id="loader-name" class="loader-name"></div>
+        <div class="loader-bar" id="loader-bar" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100"><span id="loader-fill"></span></div>
+        <div id="loader-text" class="loader-text" aria-live="polite"></div>
+        <button id="loader-play" class="btn loader-play" type="button" hidden>PLAY</button>
+        <div id="loader-tip" class="loader-tip"></div>
+      </div>
+    </div>
+  </div>
   <div class="bar">
     <h1 id="name"></h1>
     <button id="fullscreen" class="btn" type="button">Fullscreen</button>
