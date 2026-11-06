@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feedback - OGgames</title>
+<meta name="description" content="Send feedback or report a bug in a game on OGgames.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/feedback.css">
+</head>
+<body class="fb-body">
+<header class="top">
+  <a class="logo" href="index.html"><span>OG</span>games</a>
+  <a class="btn ghost" href="index.html">All games</a>
+</header>
+
+<main class="fb-page">
+  <section class="fb-hero">
+    <div class="fb-scene" aria-hidden="true">
+      <img class="fb-coin c1" src="assets/art/coin.svg" alt="">
+      <img class="fb-coin c2" src="assets/art/coin.svg" alt="">
+      <img class="fb-coin c3" src="assets/art/coin.svg" alt="">
+      <img class="fb-pip" src="assets/art/pip-fly.svg" alt="">
+      <img class="fb-nut" src="assets/art/nutling.svg" alt="">
+      <div class="fb-ground"></div>
+    </div>
+    <h1>Tell us what you think</h1>
+    <p>Loved it? Found a bug? Got a wild idea? Every message helps make the games better.</p>
+  </section>
+
+  <form id="fb-form" class="fb-card" novalidate>
+    <fieldset class="fb-types">
+      <legend>What's this about?</legend>
+      <label><input type="radio" name="type" value="Feedback" checked><span><img src="assets/art/heart.svg" alt="">Feedback</span></label>
+      <label><input type="radio" name="type" value="Bug report"><span><img src="assets/art/nutling.svg" alt="">Bug report</span></label>
+      <label><input type="radio" name="type" value="Game idea"><span><img src="assets/art/feather.svg" alt="">Game idea</span></label>
+    </fieldset>
+
+    <label class="fb-field">
+      <span>Which game?</span>
+      <select id="fb-game" name="game"></select>
+    </label>
+
+    <label class="fb-field" id="fb-steps-wrap" hidden>
+      <span>How can we make the bug happen?</span>
+      <textarea id="fb-steps" name="steps" rows="3" maxlength="1000" placeholder="1. I went to World 2&#10;2. I jumped into the lava&#10;3. ..."></textarea>
+    </label>
+
+    <label class="fb-field">
+      <span id="fb-message-label">Your message</span>
+      <textarea id="fb-message" name="message" rows="6" maxlength="2000" required aria-describedby="fb-count"></textarea>
+      <small id="fb-count" class="fb-count">0 / 2000</small>
+    </label>
+
+    <label class="fb-field">
+      <span>Your name <em>(optional)</em></span>
+      <input id="fb-name" name="name" type="text" maxlength="60" autocomplete="nickname">
+    </label>
+
+    <label class="fb-field">
+      <span>Email, if you'd like a reply <em>(optional)</em></span>
+      <input id="fb-email" name="email" type="email" maxlength="120" autocomplete="email">
+    </label>
+
+    <!-- bots fill this in, people never see it -->
+    <input class="fb-trap" id="fb-website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <p id="fb-device-note" class="fb-note" hidden>Bug reports also include your browser and device type, to help track the bug down.</p>
+    <p id="fb-status" class="fb-status" role="status" aria-live="polite"></p>
+    <button id="fb-send" class="btn fb-send" type="submit">Send it!</button>
+  </form>
+
+  <section id="fb-thanks" class="fb-card fb-thanks" hidden tabindex="-1">
+    <img src="assets/art/pip-fly.svg" alt="">
+    <h2>Thanks! We got it.</h2>
+    <p>Your message is on its way. Now go beat that high score.</p>
+    <a class="btn" href="index.html">Back to the games</a>
+    <button id="fb-again" class="btn ghost" type="button">Send another</button>
+  </section>
+</main>
+
+<script src="games.js"></script>
+<script src="assets/feedback-config.js"></script>
+<script src="assets/feedback.js"></script>
+</body>
+</html>

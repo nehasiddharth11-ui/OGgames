@@ -103,6 +103,36 @@ window.OG = (function () {
     }
   }
 
+  /* "Having Fun?" appears once ever for each player, on their first game over. */
+  var asked = false;
+  function askForFeedback(frame) {
+    var seen = false;
+    try { seen = localStorage.getItem("og_asked_feedback") === "1"; } catch (e) { /* storage blocked */ }
+    if (asked || seen) return;
+    asked = true;
+    try { localStorage.setItem("og_asked_feedback", "1"); } catch (e) { /* once per visit, then */ }
+    leaveFullscreen();
+    var box = $("ask-feedback"), wasDown = true;
+    function close() {
+      box.hidden = true;
+      clearInterval(padTimer);
+      frame.focus();
+    }
+    // X on a controller closes it, since a controller can't open the form in a new tab
+    var padTimer = setInterval(function () {
+      var pads = navigator.getGamepads ? navigator.getGamepads() : [], down = false;
+      for (var i = 0; i < pads.length; i++) {
+        if (pads[i] && pads[i].buttons[0] && pads[i].buttons[0].pressed) down = true;
+      }
+      if (down && !wasDown) close();
+      wasDown = down;
+    }, 50);
+    $("ask-close").onclick = close;
+    $("ask-send").onclick = close;
+    box.hidden = false;
+    $("ask-send").focus();
+  }
+
   function isPhone() {
     return window.matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) < 600;
   }
@@ -279,6 +309,7 @@ window.OG = (function () {
       if (e.source !== frame.contentWindow || !e.data || e.data.source !== "oggames") return;
       if (e.data.type === "ready") loader.finish();
       if (e.data.type === "exit-fullscreen") leaveFullscreen();
+      if (e.data.type === "gameover" && game.id === "pips-sky-kingdom") askForFeedback(frame);
       if (e.data.type !== "complete" || shown) return;
       shown = true;
       leaveFullscreen();

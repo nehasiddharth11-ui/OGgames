@@ -6,6 +6,10 @@ Preview OGgames.bat   Opens the site on this computer. Double-clicking index.htm
 Add a game.bat        Adds a game. Only someone with these files can do that:
                       the website has no upload page.
 
+FEEDBACK PAGE
+  feedback.html sends messages by email through Web3Forms. The key that says
+  where they go is in assets\feedback-config.js.
+
 A GAME NEEDS
   A folder with an index.html that runs in a browser.
 

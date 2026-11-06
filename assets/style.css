@@ -33,7 +33,8 @@ a { color: var(--yellow); }
   background: var(--bg); border: 3px solid var(--line); border-radius: 12px;
 }
 .search input::placeholder { color: var(--soft); }
-.top > .btn { margin-left: auto; }
+.logo + .btn { margin-left: auto; }
+@media (max-width: 520px) { .top { gap: 8px; } .top .btn { padding: 8px 10px; font-size: 14px; } }
 
 .page { max-width: 1240px; margin: 0 auto; padding: 16px; }
 h1 { font: 400 32px/1.15 Impact, "Arial Black", sans-serif; letter-spacing: .5px; margin: 0; }
