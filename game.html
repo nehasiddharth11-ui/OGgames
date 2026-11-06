@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play on OGgames</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="index.html"><span>OG</span>games</a>
+  <a class="btn ghost" href="index.html">All games</a>
+</header>
+
+<main class="page">
+  <div id="stage" class="stage"></div>
+  <div class="bar">
+    <h1 id="name"></h1>
+    <button id="fullscreen" class="btn" type="button">Fullscreen</button>
+  </div>
+  <div class="info">
+    <div>
+      <h2>About this game</h2>
+      <p id="about"></p>
+    </div>
+    <div>
+      <h2>Controls</h2>
+      <p id="controls"></p>
+    </div>
+  </div>
+  <section id="more-wrap" hidden>
+    <h2>More games</h2>
+    <div id="more" class="grid"></div>
+  </section>
+</main>
+
+<div id="popup" class="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title" hidden>
+  <div class="card">
+    <div class="stars" aria-hidden="true">★ ★ ★</div>
+    <h2 id="popup-title"></h2>
+    <p>That was seriously impressive! Want more games and tutorials? Come hang out on my YouTube channel. New stuff drops there first.</p>
+    <a id="popup-link" class="btn yt" target="_blank" rel="noopener">Go to my YouTube channel</a>
+    <button id="popup-close" class="btn ghost" type="button">Keep playing</button>
+  </div>
+</div>
+
+<script src="games.js"></script>
+<script src="assets/app.js"></script>
+<script>OG.play();</script>
+</body>
+</html>

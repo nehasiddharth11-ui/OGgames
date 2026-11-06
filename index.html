@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OGgames - Free games you can play right now</title>
+<meta name="description" content="Free browser games on OGgames. No downloads, just click and play.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="index.html"><span>OG</span>games</a>
+  <label class="search">
+    <span class="sr">Search games</span>
+    <input id="search" type="search" placeholder="Search games..." autocomplete="off">
+  </label>
+</header>
+
+<main class="page">
+  <nav id="chips" class="chips" aria-label="Game categories"></nav>
+  <section id="recent-wrap" hidden>
+    <h2>Keep playing</h2>
+    <div id="recent" class="grid"></div>
+  </section>
+  <section>
+    <h2 id="grid-title">All games</h2>
+    <div id="grid" class="grid"></div>
+    <p id="empty" class="empty" hidden>No games match that search.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <a href="https://www.youtube.com/channel/UCQ1P8B75CzSpf7KZPjvYejQ" target="_blank" rel="noopener">OGgames on YouTube</a>
+</footer>
+
+<script src="games.js"></script>
+<script src="assets/app.js"></script>
+<script>OG.home();</script>
+</body>
+</html>
