@@ -5,6 +5,11 @@ window.OG = (function () {
 
   function $(id) { return document.getElementById(id); }
 
+  // the feedback links only appear once the form can really deliver messages
+  if (window.OG_FEEDBACK_KEY) {
+    document.querySelectorAll("[data-feedback]").forEach(function (el) { el.hidden = false; });
+  }
+
   // Browser storage can be blocked (private windows), so never rely on it
   function loadRecent() {
     try { return JSON.parse(localStorage.getItem("og_recent")) || []; } catch (e) { return []; }
@@ -106,6 +111,7 @@ window.OG = (function () {
   /* "Having Fun?" appears once ever for each player, on their first game over. */
   var asked = false;
   function askForFeedback(frame) {
+    if (!window.OG_FEEDBACK_KEY) return;
     var seen = false;
     try { seen = localStorage.getItem("og_asked_feedback") === "1"; } catch (e) { /* storage blocked */ }
     if (asked || seen) return;

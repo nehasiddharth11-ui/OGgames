@@ -14,7 +14,7 @@
     <span class="sr">Search games</span>
     <input id="search" type="search" placeholder="Search games..." autocomplete="off">
   </label>
-  <a class="btn ghost top-link" href="feedback.html">Feedback</a>
+  <a class="btn ghost top-link" href="feedback.html" data-feedback hidden>Feedback</a>
 </header>
 
 <main class="page">
@@ -32,11 +32,11 @@
 
 <footer class="foot">
   <a href="https://www.youtube.com/channel/UCQ1P8B75CzSpf7KZPjvYejQ" target="_blank" rel="noopener">OGgames on YouTube</a>
-  &nbsp;&middot;&nbsp;
-  <a href="feedback.html">Send feedback or report a bug</a>
+  <span data-feedback hidden>&nbsp;&middot;&nbsp; <a href="feedback.html">Send feedback or report a bug</a></span>
 </footer>
 
 <script src="games.js"></script>
+<script src="assets/feedback-config.js"></script>
 <script src="assets/app.js"></script>
 <script>OG.home();</script>
 </body>
