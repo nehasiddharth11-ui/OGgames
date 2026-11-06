@@ -145,3 +145,31 @@ h2 { font-size: 20px; margin: 22px 0 12px; }
 @media (prefers-reduced-motion: reduce) {
   .loader-pic, .loader-play { animation: none; }
 }
+
+/* full screen: works on every phone, including iPhones */
+.exit-full, .rotate { display: none; }
+body.game-full { overflow: hidden; overscroll-behavior: none; }
+body.game-full .top { display: none; }
+body.game-full .stage {
+  position: fixed; inset: 0; z-index: 10; width: 100vw; height: 100vh; height: 100dvh; max-height: none; aspect-ratio: auto;
+  margin: 0; border: 0; border-radius: 0; touch-action: none;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+body.game-full .exit-full {
+  display: block; position: absolute; z-index: 4;
+  top: max(6px, env(safe-area-inset-top)); left: max(6px, env(safe-area-inset-left));
+  width: 40px; height: 40px; padding: 0; font-family: inherit; font-size: 28px; font-weight: 700; line-height: 1; color: #fff; cursor: pointer;
+  background: rgba(18, 13, 46, .75); border: 2px solid rgba(255, 255, 255, .7); border-radius: 50%;
+}
+@media (orientation: portrait) and (pointer: coarse) {
+  body.game-full .rotate {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    position: absolute; inset: 0; z-index: 3; padding: 24px; text-align: center;
+    background: var(--bg); color: var(--ink); font-size: 20px; font-weight: 700;
+  }
+  .rotate-phone {
+    width: 56px; height: 96px; border: 5px solid var(--yellow); border-radius: 12px;
+    animation: turn 1.8s ease-in-out infinite;
+  }
+}
+@keyframes turn { 50%, 100% { transform: rotate(90deg); } }

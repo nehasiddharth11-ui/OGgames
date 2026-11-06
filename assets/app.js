@@ -103,6 +103,32 @@ window.OG = (function () {
     }
   }
 
+  function isPhone() {
+    return window.matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) < 600;
+  }
+
+  /* The page itself always fills the screen, because iPhones don't let websites use real
+     fullscreen. Where the browser does allow it, real fullscreen also hides its bars. */
+  function enterFullscreen(stage, frame) {
+    document.body.classList.add("game-full");
+    window.scrollTo(0, 0);
+    if (stage.requestFullscreen) {
+      stage.requestFullscreen().then(function () {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("landscape").catch(function () { /* the "turn your phone" message covers it */ });
+        }
+        // Chrome and Edge: Esc pauses the game, holding Esc leaves fullscreen
+        if (navigator.keyboard && navigator.keyboard.lock) return navigator.keyboard.lock(["Escape"]);
+      }).catch(function () { /* the page still fills the screen */ });
+    }
+    frame.focus();
+  }
+
+  function leaveFullscreen() {
+    document.body.classList.remove("game-full");
+    if (document.fullscreenElement) document.exitFullscreen();
+  }
+
   /* The loading screen. A browser can't tell how far along a game's start-up is, so the
      bar is a time-based estimate that never reaches the end until the game says it's ready. */
   function startLoader(game) {
@@ -143,6 +169,7 @@ window.OG = (function () {
     function enter() {
       clearInterval(tipTimer);
       box.hidden = true;
+      if (loaderApi.onEnter) loaderApi.onEnter();
       window.removeEventListener("keydown", onKey);
       var f = loaderApi.frame;
       if (!f) return;
@@ -224,14 +251,13 @@ window.OG = (function () {
     stage.insertBefore(frame, stage.firstChild);
     loader.frame = frame;
 
-    $("fullscreen").onclick = function () {
-      if (stage.requestFullscreen) {
-        stage.requestFullscreen().then(function () {
-          // Chrome and Edge: Esc pauses the game, holding Esc leaves fullscreen
-          if (navigator.keyboard && navigator.keyboard.lock) return navigator.keyboard.lock(["Escape"]);
-        }).catch(function () { /* fullscreen still works without it */ });
-      }
-      frame.focus();
+    $("fullscreen").onclick = function () { enterFullscreen(stage, frame); };
+    $("exit-full").onclick = function () { leaveFullscreen(); };
+    document.addEventListener("fullscreenchange", function () {
+      if (!document.fullscreenElement) document.body.classList.remove("game-full");
+    });
+    loader.onEnter = function () {
+      if (isPhone()) enterFullscreen(stage, frame);     // on a phone, Play goes straight to full screen
     };
 
     // The game says it was beaten: only believe the game in our own frame
@@ -241,7 +267,7 @@ window.OG = (function () {
       if (e.data.type === "ready") loader.finish();
       if (e.data.type !== "complete" || shown) return;
       shown = true;
-      if (document.fullscreenElement) document.exitFullscreen();
+      leaveFullscreen();
       $("popup-title").textContent = "You beat " + game.name + "!";
       $("popup-link").href = YOUTUBE;
       $("popup").hidden = false;
